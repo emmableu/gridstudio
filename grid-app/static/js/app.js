@@ -1,11 +1,11 @@
 (function(){
-	
+
 	// macOS swipe back prevention
 	history.pushState(null, null, '');
 	window.addEventListener('popstate', function(event) {
 		history.pushState(null, null, '');
 	});
-	
+
 	function download(data, filename, type) {
 		var file = new Blob([data], {type: type});
 		if (window.navigator.msSaveOrOpenBlob) // IE10+
@@ -19,8 +19,8 @@
 			a.click();
 			setTimeout(function() {
 				document.body.removeChild(a);
-				window.URL.revokeObjectURL(url);  
-			}, 0); 
+				window.URL.revokeObjectURL(url);
+			}, 0);
 		}
 	}
 
@@ -37,14 +37,14 @@
 		this.sheetIndex = sheetIndex;
 		this.type = type;
 	}
-	
+
 	function dataURLtoBytes(url){
 		return (fetch(url)
 			.then(function(res){return res.arrayBuffer();})
 			.then(function(buf){return buf; })
 		);
 	}
-	
+
 	String.prototype.capitalize = function() {
 		return this.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
 	};
@@ -59,13 +59,13 @@
 		this.editor = new Editor(this);
 		this.codeGen = new CodeGen(this);
 		this.termManager = new TermManager(this);
-		
+
  		this.dom = document.querySelector('body');
 		this.canvas = document.createElement('canvas');
 		this.canvasWidth, this.canvasHeight;
 
 		this.ctx = this.canvas.getContext('2d', {alpha: false});
-		
+
 		this.sheetDom = document.querySelector('div-sheet');
 		this.sheetSizer = this.sheetDom.querySelector('.sheet-sizer');
 		this.formula_input = $(this.dom.querySelector('.formula-bar input'));
@@ -81,7 +81,7 @@
 		this.scrollOffsetX = 0;
 		this.scrollOffsetY = 0;
 		this.textPadding = 3;
-		
+
 		this.plots = {};
 		this.callbacks = {};
 
@@ -96,7 +96,7 @@
 		this.drawColumnStart = 0;
 		this.drawRowEnd = 0;
 		this.drawColumnEnd = 0;
-		
+
 		this.pixelRatio = window.devicePixelRatio;
 
 		this.selectedCells = [[0,0],[0,0]];
@@ -114,7 +114,7 @@
 		this.columnWidthsCache = [];
 
 		this.init_input_field_backup_value = undefined;
-		
+
 		this.fontStyle = "12px Arial";
 		this.fontHeight = determineFontHeight(this.fontStyle);
 
@@ -134,7 +134,7 @@
 
 			// do not return undefined for empty cells but an empty string (consistent with default cell values in backend)
 			if(this.data[sheet][position[0]] === undefined){
-				return ""; 
+				return "";
 			}else{
 				var value = this.data[sheet][position[0]][position[1]];
 				if(value === undefined){
@@ -163,7 +163,7 @@
 				return this.dataFormulas[sheet][position[0]][position[1]];
 			}
 		}
-		
+
 		this.update_plots = function(){
 			for(var key in this.plots){
 				if(this.plots.hasOwnProperty(key)){
@@ -218,7 +218,7 @@
 			}
 			return buff;
 		}
-		
+
 		this.lettersToIndex = function(letters){
 			var index = 0;
 			var columns = letters.length - 1;
@@ -271,7 +271,7 @@
 			}
 
 			this.dataFormulas[sheet][position[0]][position[1]] = value.toString();
-			
+
 			if(update !== false){
 				this.wsManager.send({arguments: ["SET", this.indexToLetters(position[1]+1) + (position[0]+1), value.toString(), ""+sheet]});
 			}
@@ -292,9 +292,9 @@
 
 				var selector = $(this).attr('data-tab');
 				_this.showTab(selector);
-				
+
 			});
-			
+
 		}
 
 		this.addStaticPlot = function(img){
@@ -314,7 +314,7 @@
 
 			this.currentStaticPlot = index;
 
-			// mark left arrow half opacity if 
+			// mark left arrow half opacity if
 			$('.view.plots .plot-navigator').children().removeClass('disabled');
 
 			if(index == 0){
@@ -341,7 +341,7 @@
 
 				var newIndex = _this.currentStaticPlot+direction;
 				if(newIndex >= 0 && newIndex < _this.staticPlotCount){
-					_this.setStaticPlotIndex(newIndex);					
+					_this.setStaticPlotIndex(newIndex);
 				}
 
 			});
@@ -353,7 +353,7 @@
 
 			// hide both
 			$('.dev-tabs .view').hide();
-		
+
 			// show selected
 			$('.dev-tabs .' + selector).show();
 
@@ -414,7 +414,7 @@
 		}
 
 		this.sizeSizer = function(){
-			
+
 			this.canvas.width = this.sheetDom.clientWidth * this.pixelRatio;
 			this.canvasWidth = this.canvas.width;
 
@@ -525,13 +525,13 @@
 		};
 
 		this.deleteRowColumn = function(type){
-			
+
 			var clickedCellPosition = _this.positionToCellLocation(_this.mouseRightClickLocation[0],_this.mouseRightClickLocation[1]);
 			_this.wsManager.send({arguments: [type, this.cellZeroIndexToString(clickedCellPosition[0], clickedCellPosition[1])]});
 		}
 
 		this.insertRowColumn = function(type, direction){
-			
+
 			var clickedCellPosition = _this.positionToCellLocation(_this.mouseRightClickLocation[0],_this.mouseRightClickLocation[1]);
 
 			_this.wsManager.send({arguments:["INSERTROWCOL", type, direction, this.cellZeroIndexToString(clickedCellPosition[0], clickedCellPosition[1])]});
@@ -539,7 +539,7 @@
 
 		this.registerContextMenu = function(){
 			$(_this.sheetDom).bind("contextmenu", function (event) {
-    
+
 				// Avoid the real one
 				event.preventDefault();
 
@@ -554,7 +554,7 @@
 				$('.context-menu .hide').hide();
 
 				// show contextual items
-				
+
 				if(_this.mouseRightClickLocation[0] <= _this.sidebarSize[0]){
 					$('.context-menu .row-only').show();
 				}
@@ -610,7 +610,7 @@
 					_this.deleteRowColumn('DELETEROW');
 				}else if($(this).hasClass('codegen')){
 					var method = $(this).attr('data-method');
-					var selection = _this.cellArrayToStringRange(_this.getSelectedCellsInOrder()); 
+					var selection = _this.cellArrayToStringRange(_this.getSelectedCellsInOrder());
 					_this.codeGen.generate(method, selection, _this.activeSheet);
 				}
 
@@ -621,7 +621,7 @@
 			$('div-sheet').bind("mousedown",function(){
 				$(".context-menu").removeClass('shown');
 			})
-			
+
 		}
 
 		this.cutSelection = function(){
@@ -662,7 +662,7 @@
 				}
 			}
 		}
-		
+
 		// this.getSheets() = function(){
 		// 	this.wsManager.send({arguments: ["GETSHEETS"]}));
 		// }
@@ -749,7 +749,7 @@
 				if(remove){
 					_this.wsManager.send({arguments:["REMOVESHEET",tabIndex+""]})
 				}
-				
+
 			});
 		}
 
@@ -819,7 +819,7 @@
 
 			// init input
 			this.init_input();
-			
+
 			this.initRowCols();
 
 			this.initImagePlotTab();
@@ -838,14 +838,14 @@
 
 			});
 
-			
-			
+
+
 			// resize listener
 			window.addEventListener('resize',function(){
 				_this.resizeSheet();
 				_this.drawSheet();
 			});
-			
+
 			this.isFocusedOnElement = function(){
 
 				var focused_on_input = false;
@@ -855,7 +855,7 @@
 						focused_on_input = true;
 					}
 				});
-				
+
 				if(!focused_on_input && !_this.input_field.is(':focus') && !_this.formula_input.is(":focus") && !_this.editor.ace.isFocused() && !_this.termManager.isFocused()){
 					return false;
 				}else{
@@ -867,20 +867,20 @@
 			this.sheetDom.addEventListener('dblclick',function(e){
 
 				e.preventDefault();
-				
+
 				// prevent double click when clicking in plot
 				if($(e.target).parents('.plot').length == 0){
 
 
 					if(e.which == 1 && !_this.input_field.is(':focus')){
 
-						
+
 						var canvasMouseX = e.offsetX - _this.sheetDom.scrollLeft;
 						var canvasMouseY = e.offsetY - _this.sheetDom.scrollTop;
 
 						// check if dblclick location is in indicator area, if so, resize closes column to default rowheight
 						if(canvasMouseX < _this.sidebarSize[0] || canvasMouseY < _this.sidebarSize[1]){
-							
+
 							var type = 'column';
 							if( canvasMouseX < _this.sidebarSize[0]){
 								type = 'row';
@@ -888,12 +888,12 @@
 
 							var cell = _this.positionToCellDivider(canvasMouseX, canvasMouseY, type);
 
-							
+
 							if(type == 'column'){
 
 								// _this.columnWidths(cell[1],_this.cellWidth);
 								_this.wsManager.send({arguments: ["MAXCOLUMNWIDTH", (cell[1]+1) + "", _this.activeSheet + ""]});
-								
+
 							}else{
 
 								_this.rowHeights(cell[0], _this.cellHeight);
@@ -909,17 +909,17 @@
 
 							// if not double click on sidebar, open cell in location
 							_this.show_input_field();
-							
+
 							var range = document.createRange();
 							range.setStart(_this.input_field[0],0);
 							range.setEnd(_this.input_field[0], 0);
 
 						}
-	
+
 					}
 				}
-				
-				
+
+
 			});
 
 			this.selectCell = function(cell) {
@@ -930,7 +930,7 @@
 				if(formula_value !== undefined){
 					this.formula_input.val(formula_value);
 				}else{
-					this.formula_input.val(formula_value);		
+					this.formula_input.val(formula_value);
 				}
 			}
 
@@ -949,7 +949,7 @@
 					// also check for sheetSizer (for scrollbar), don't fall through to deselect_input_field
 					if(e.target == _this.sheetSizer){
 						_this.mouse_down_canvas = true;
-						
+
 						// check if in indicator ranges -- resize column/rows
 						if(canvasMouseX < _this.sidebarSize[0] || canvasMouseY < _this.sidebarSize[1]){
 							_this.resizingIndicator = true;
@@ -963,9 +963,9 @@
 							}
 
 							var cell = _this.positionToCellDivider(canvasMouseX, canvasMouseY, _this.resizingIndicatorType);
-							
+
 							_this.resizingIndicatorCell = cell;
-							
+
 							// identify which rowHeight or columnHeight should be transformed
 
 							// cell[0] <- row
@@ -983,14 +983,14 @@
 								// set both cells
 								_this.selectCell(cell);
 							}
-			
+
 							// render cells
 							_this.drawSheet();
 
 						}
-						
+
 					}
-					
+
 				}else{
 					// if clicked on sheetDom deselect
 					if(e.target != _this.input_field[0] && _this.input_field.is(':focus')){
@@ -1003,7 +1003,7 @@
 						// closing the input can be done either through ESC key or pressing enter.
 					}
 				}
-				
+
 			});
 
 			// mouse move listener
@@ -1017,23 +1017,23 @@
 				if(_this.mouse_down_canvas){
 
 					if(_this.resizingIndicator){
-						
+
 						var diff = [e.offsetX - _this.resizingIndicatorPosition[0], e.offsetY - _this.resizingIndicatorPosition[1]];
-						
+
 						if(_this.resizingIndicatorType == 'column'){
 							// resizing column
 							var index =_this.resizingIndicatorCell[1];
 							_this.columnWidths(index, _this.columnWidths(index) + diff[0]);
-							
+
 							if(_this.columnWidths(index) < _this.minColRowSize){
 								_this.columnWidths(index, _this.minColRowSize);
 							}
 						}else{
 							// resizing row
 							var index =_this.resizingIndicatorCell[0];
-							
+
 							_this.rowHeights(index, _this.rowHeights(index) + diff[1]);
-							
+
 							if(_this.rowHeights(index) < _this.minColRowSize){
 								_this.rowHeights(index,  _this.minColRowSize);
 							}
@@ -1043,14 +1043,14 @@
 						_this.drawSheet();
 
 						_this.resizingIndicatorPosition = [e.offsetX, e.offsetY];
-						
+
 					}else{
 
 						// drag operation
-					
+
 						// set end cell selection as end cell
 						var cell = _this.positionToCellLocation(e.offsetX - _this.sheetDom.scrollLeft, e.offsetY - _this.sheetDom.scrollTop);
-						
+
 						// redraw selection if new cell
 						if(cell != _this.selectedCells[1]){
 							_this.selectedCells[1] = cell.slice();
@@ -1059,8 +1059,8 @@
 						}
 
 					}
-					
-					
+
+
 				}
 
 			});
@@ -1075,18 +1075,18 @@
 					_this.resizeSheet();
 					_this.drawSheet();
 				}
-				
+
 			});
 
 			document.body.addEventListener('paste', function(e){
 
 				if(!_this.isFocusedOnElement()){
 					// _this.set_range(_this.selectedCells[0], _this.selectedCells[1], event.clipboardData.getData('Text'));
-					
+
 					// // redraw
 					// _this.drawSheet();
 				}
-				
+
 			});
 
 			// register keyboard listener
@@ -1099,21 +1099,21 @@
 
 					// either back out input action or deselect
 					if(_this.input_field.is(":focus")){
-						
+
 						// put back backup value back
-						// _this.input_field.val(_this.init_input_field_backup_value);					
+						// _this.input_field.val(_this.init_input_field_backup_value);
 						_this.deselect_input_field(false);
 					}else{
 						// _this.selectedCells = undefined;
 						_this.drawSheet();
 					}
-					
+
 				}
 				// left arrow
 				else if(e.keyCode >= 37 && e.keyCode <= 40){
 
 					if(!_this.isFocusedOnElement()){
-						
+
 						if(e.keyCode == 37){
 							_this.translateSelection(-1, 0, e.shiftKey, e.ctrlKey || e.metaKey);
 						}
@@ -1135,9 +1135,9 @@
 					}
 				}
 				else if(e.keyCode == 13){
-					
+
 					if(_this.isFocusedOnElement()){
-						
+
 						if(_this.formula_input.is(":focus")){
 							var inputValue = _this.formula_input.val();
 							_this.set_formula(_this.selectedCells[0], inputValue, true, _this.activeSheet);
@@ -1146,26 +1146,26 @@
 						else if(_this.input_field.is(":focus")){
 							// defocus, e.g. submit to currently selected field
 							_this.deselect_input_field(true);
-	
+
 							// set focus to next cell
 							var nextCell = _this.selectedCells[0];
 							_this.translateSelection(0, 1, false, false);
-	
+
 						}else{
 							keyRegistered = false;
 						}
-						
+
 					}else{
-						
+
 						_this.show_input_field();
-						
+
 					}
-					
+
 				}
 				else if(e.keyCode == 9){
-					
+
 					if(_this.isFocusedOnElement()){
-						
+
 						if(_this.input_field.is(":focus")){
 							// defocus, e.g. submit to currently selected field
 							_this.deselect_input_field(true);
@@ -1174,7 +1174,7 @@
 						var nextCell = _this.selectedCells[0];
 
 						_this.translateSelection(1, 0, false, false);
-						
+
 					}else{
 						var nextCell = _this.selectedCells[0];
 						nextCell[1]++;
@@ -1182,12 +1182,12 @@
 
 						_this.drawSheet();
 					}
-					
+
 				}
 				else if(e.keyCode == 9){
 
 					if(_this.input_field.is(":focus")){
-						
+
 						_this.deselect_input_field(true);
 
 						// set focus to next cell
@@ -1232,41 +1232,41 @@
 					}
 
 					// however, don't absorb
-					keyRegistered = false;					
+					keyRegistered = false;
 				}
 				else if(
 					(e.ctrlKey && (e.keyCode == 67)) ||
 					(e.metaKey && (e.keyCode == 67))) {
 
 					if(!_this.isFocusedOnElement()){
-						
+
 						_this.copySelection();
 
 					}else{
 						keyRegistered = false;
 					}
-						
-					
+
+
 				}
 				else if(
 					(e.ctrlKey && (e.keyCode == 88)) ||
 					(e.metaKey && (e.keyCode == 88))) {
 
 					if(!_this.isFocusedOnElement()){
-						
+
 						_this.cutSelection();
 
 					}else{
 						keyRegistered = false;
 					}
-					
+
 				}
 				else if(
 					(e.ctrlKey && (e.keyCode == 86)) ||
 					(e.metaKey && (e.keyCode == 86))) {
 
 					if(!_this.isFocusedOnElement()){
-						
+
 						if(e.shiftKey){
 							_this.pasteSelectionAsValue();
 						}else{
@@ -1289,10 +1289,10 @@
 				else if((e.ctrlKey || e.metaKey) && e.keyCode == 65) {
 
 					if(!_this.isFocusedOnElement()){
-						
+
 						// select all cells
 						_this.selectedCells = [[0,0], [_this.sheetSizes[_this.activeSheet][0]-1, _this.sheetSizes[_this.activeSheet][1]-1]]
-						
+
 						// update draw
 						_this.drawSheet();
 
@@ -1302,7 +1302,7 @@
 
 				}
 				else{
-					keyRegistered = false;			
+					keyRegistered = false;
 				}
 
 				if(keyRegistered){
@@ -1337,8 +1337,8 @@
 		}
 
 		this.refreshView = function(){
-			
-			// first get the view based on current scroll position 
+
+			// first get the view based on current scroll position
 			// (horizontally which columns are in view, vertically which rows are in view)
 
 			// send websocket request for this range
@@ -1356,11 +1356,11 @@
 
 		this.deselect_input_field = function(set_values){
 			_this.input_field.blur();
-			
+
 			if(_this.selectedCells != undefined && set_values === true){
 				_this.set_range(_this.selectedCells[0], _this.selectedCells[0], _this.input_field.val());
 			}
-			
+
 			// clear value from input field
 			_this.input_field.val('');
 			_this.input_field.hide();
@@ -1391,7 +1391,7 @@
 			this.input_field.val(formula);
 
 			this.init_input_field_backup_value = this.input_field.val();
-			
+
 			// first: position for what cell?
 			var cellPosition = this.cellLocationToPosition(this.selectedCells[0]);
 
@@ -1404,10 +1404,10 @@
 
 			// draw input at this position
 			this.input_field.css({marginLeft: cellPosition[0] + 1 + this.sidebarSize[0], marginTop: cellPosition[1] + 1 + this.sidebarSize[1]});
-			
+
 			this.input_field.show();
 			this.input_field.focus();
-			
+
 		}
 
 		this.deleteSelection = function(){
@@ -1486,7 +1486,7 @@
 					this.set_formula(current_cell, value, true, this.activeSheet);
 				}
 			}
-			
+
 			this.drawSheet();
 		}
 
@@ -1515,7 +1515,7 @@
 			// 	}else if(type == 'empty'){
 
 			// 		if(this.get(currentCell) === undefined){
-						
+
 			// 			// undo last step to get to existent cell
 			// 			currentCell[row_or_column] -= direction;
 			// 			break;
@@ -1540,7 +1540,7 @@
 			// set it equal to copy
 			var cell = this.selectedCells[0].slice();
 			var _this = this;
-			
+
 			if(shift){
 				// create copy
 				cell = this.selectedCells[1].slice();
@@ -1583,7 +1583,7 @@
 				}else if (dy > 0){
 					direction = "down";
 				}
-				
+
 				// on ctrl jump make this asynchronously
 				this.findFirstTypeCell(this.cellZeroIndexToString(cell[0],cell[1]), direction, function(cell){
 
@@ -1593,21 +1593,21 @@
 					if(!shift){
 						_this.selectCell(cell);
 					}
-					
+
 					_this.positionViewOnSelectedCells();
 				});
 
 				// if(currentNextCellValue == '' || currentNextCellValue == undefined){
 
 				// 	// console.log("Check for non empty cell");
-					
+
 
 				// }
 				// // for non-empty cells go to first empty
 				// else{
 
 				// 	// console.log("Check for empty cell");
-					
+
 				// 	cell = this.findFirstTypeCell(cell, row_or_column, direction, 'empty');
 
 				// }
@@ -1622,10 +1622,10 @@
 
 				// set second cell equal to first cell
 				this.selectedCells[1] = cell;
-				
-				this.positionViewOnSelectedCells();		
+
+				this.positionViewOnSelectedCells();
 			}
-			
+
 		}
 
 		this.positionViewOnSelectedCells = function(){
@@ -1662,7 +1662,7 @@
 			while(viewEndRow < this.numRows){
 
 				measuredHeight += this.rowHeights(viewEndRow);
-				
+
 				// increment to next row
 				if (measuredHeight >= (sheetViewHeight - this.sidebarSize[1])){
 
@@ -1699,12 +1699,12 @@
 				// compute downwards
 				var minimumFirstRow = cellToCenterOn[0];
 				var measuredHeight = 0;
-				
+
 				// endless loop until maximum last row
 				while(minimumFirstRow >= 0){
 
 					measuredHeight += this.rowHeights(minimumFirstRow);
-					
+
 					// increment to next row
 					if (measuredHeight >= (sheetViewHeight - this.sidebarSize[1])){
 						// exclude final row since not fully in view
@@ -1714,7 +1714,7 @@
 						minimumFirstRow--;
 					}
 				}
-				
+
 				// set vertical scroll to cellToCenterOn[1] position
 				var newScrollOffsetY = (this.sheetSizer.clientHeight - sheetViewHeight) * (minimumFirstRow / this.finalRow);
 				this.sheetDom.scrollTop = newScrollOffsetY;
@@ -1726,12 +1726,12 @@
 				// compute downwards
 				var minimumFirstColumn = cellToCenterOn[1];
 				var measureWidth = 0;
-				
+
 				// endless loop until maximum last row
 				while(minimumFirstColumn >= 0){
 
 					measureWidth += this.columnWidths(minimumFirstColumn);
-					
+
 					// increment to next row
 					if (measureWidth >= (sheetViewWidth - this.sidebarSize[0])){
 						// exclude final row since not fully in view
@@ -1755,13 +1755,13 @@
 		}
 
 		this.translateCell = function(cell, dx, dy){
-			
+
 			// row
 			cell[0] += dy;
 
 			// column
 			cell[1] += dx;
-			
+
 
 			if(cell[0] < 0){
 				cell[0] = 0;
@@ -1781,15 +1781,15 @@
 		}
 
 		this.cellLocationToPosition = function(cellPosition){
-			
+
 			// return the X, Y coordinates of the cell or undefined if the cell is not being rendered
-			
+
 			// check whether the cells are within the view bound
 			// if(cellPosition[0] < this.drawRowStart || cellPosition[1] < this.drawColumnStart){
 			// 	return undefined;
 			// }else{
 
-				
+
 			// }
 
 			// TODO: for now don't check bounds
@@ -1797,7 +1797,7 @@
 			// calculate the y axis (the row)
 			var y = 0;
 			var currentRowHeight = 0;
-			
+
 			currentRowHeight = cellPosition[0] * this.cellHeight;
 			for(var key in this.rowHeightsCache){
 				if(parseInt(key) < cellPosition[0]){
@@ -1814,7 +1814,7 @@
 
 			var x = 0;
 			var currentColumnWidth = 0;
-			
+
 			currentColumnWidth = cellPosition[1] * this.cellWidth;
 			for(var key in this.columnWidthsCache){
 				if(parseInt(key) < cellPosition[1]){
@@ -1855,7 +1855,7 @@
 				currentRowHeight += this.rowHeights(i);
 				if(currentRowHeight >= rowY || i+1 == this.numRows){
 					rowIndex = i;
-					break;					
+					break;
 				}
 			}
 
@@ -1863,50 +1863,50 @@
 		}
 
 		this.positionToCellDivider = function(x, y, type){
-			
+
 			var rowIndex = 0;
 			var columnIndex = 0;
-			
+
 			// optimize efficiency due to never being able to resize both column and row
 			if(type == 'column'){
 				var rowX = x + this.sheetOffsetX - this.sidebarSize[0];
 				var currentColumnWidth = 0;
-	
+
 				for(var i = 0; i < this.numColumns; i++){
-	
+
 					currentColumnWidth += this.columnWidths(i);
 					if(currentColumnWidth >= rowX){
 						columnIndex = i;
-	
+
 						var dist1 = Math.abs(rowX - currentColumnWidth);
 						var dist2 = Math.abs(rowX - (currentColumnWidth - this.columnWidths(i)));
-	
+
 						// if currentColumndWidth -= this.columnsWidths[i] is closer, choose that column
 						if(dist2 < dist1){
 							columnIndex = i - 1;
 						}
-						
+
 						break;
 					}
 				}
 			}else{
 				var rowY = y + this.sheetOffsetY - this.sidebarSize[1];
 				var currentRowHeight = 0;
-	
+
 				for(var i = 0; i < this.numRows; i++){
 					currentRowHeight += this.rowHeights(i);
 					if(currentRowHeight >= rowY){
 						rowIndex = i;
-	
+
 						var dist1 = Math.abs(rowY - currentRowHeight);
 						var dist2 = Math.abs(rowY - (currentRowHeight - this.rowHeights(i)));
-	
+
 						// if currentRowHeight -= this.rowHeights(i) is closer, choose that row
 						if(dist2 < dist1){
 							rowIndex = i - 1;
 						}
-	
-						break;					
+
+						break;
 					}
 				}
 			}
@@ -1948,7 +1948,7 @@
 			this.computeRowHeight();
 			this.computeColumnWidth();
 			this.computeScrollBounds();
-			
+
 		}
 
 		this.computeScrollBounds = function(){
@@ -1969,7 +1969,7 @@
 				}else{
 					break;
 				}
-				
+
 			}
 
 			// interpolate linearly between 0 and finalRow
@@ -1986,94 +1986,94 @@
 			this.finalColumn = finalColumn;
 
 		}
-		
+
 		this.codeOpen = true;
-		
+
 		this.resizeSheet = function(){
 			this.computeScrollBounds();
 			this.sizeSizer();
 		}
-		
+
 		this.toggleCode = function(){
 			if (this.codeOpen){
-				
+
 				// close editor
 				$(this.editor.dom).css({width: 0})
 				$('.left-panel').css({width: '100%'});
-				
+
 			}else{
-				
+
 				// open editor
 				$(this.editor.dom).css({width: ''})
 				$('.left-panel').css({width: ''});
 			}
-			
+
 			this.codeOpen = !this.codeOpen;
 
 			// resize spreadsheet
 			this.resizeSheet();
 			this.drawSheet();
 		}
-		
+
 		this.openFile = function(){
-			
+
 			var input = $(this.dom).find('menu-item.load-csv input');
 			input.click();
 		}
-		
+
 		this.openFileUpload = function(){
 			var input = $(this.dom).find('menu-item.upload-file input');
 			input.click();
 		}
-		
+
 		this.uploadCSV = function(){
-				
+
 			var input = $(this.dom).find('menu-item.load-csv input');
-			
+
 			var reader = new FileReader();
 
 			reader.onload = function(e){
-				
+
 				var data = e.target.result;
-				
+
 				// console.log(data);
-				
+
 				// send data through WS
 				_this.wsManager.send({arguments: ["CSV", data]});
 			}
-			
+
 			reader.readAsText(input[0].files[0]);
 
 			// reset to empty to detect new uploads
 			input.val("");
-			
+
 		}
-		
-		
+
+
 		this.uploadFile = function(file){
-			
+
 			var formData = new FormData();
 
 			// add assoc key values, this will be posts values
 			formData.append("file", file, file.name);
 			formData.append("upload_file", true);
-			
+
 			var progressHandling = function (event) {
 				var percent = 0;
 				var position = event.loaded || event.position;
 				var total = event.total;
-				
+
 				if (event.lengthComputable) {
 					percent = Math.ceil(position / total * 100);
 				}
-				
+
 				console.log("File upload progress: " + percent);
-				
+
 				// update progressbars classes so it fits your code
 				// $(progress_bar_id + " .progress-bar").css("width", +percent + "%");
 				// $(progress_bar_id + " .status").text(percent + "%");
 			};
-			
+
 			$.ajax({
 				type: "POST",
 				url: "uploadFile",
@@ -2099,7 +2099,7 @@
 				processData: false,
 				timeout: 60000
 			});
-			
+
 		}
 
 		this.saveWorkspace = function(){
@@ -2148,37 +2148,37 @@
 			});
 
 			menu.find('menu-item.plot-histogram').click(function(){
-				_this.plot('histogram');
+				_this.parallelText();
 			});
-			
+
 			menu.find('menu-item.code').click(function(){
 				_this.toggleCode();
 			});
-			
+
 			menu.find('menu-item.upload-file input').on('change', function(){
 				var file = $(this)[0].files[0];
 				_this.uploadFile(file);
 			});
-			
+
 			// set up file change handler for loadCSV
 			var input = $(this.dom).find('menu-item.load-csv input');
-			
+
 			input[0].addEventListener('change', function(e){
 				_this.uploadCSV();
 			})
-			
+
 			menu.find('menu-item.load-csv').click(function(e){
 				if(!$(e.target).hasClass('csv-input')){
 					_this.openFile();
 				}
 			});
-			
+
 			menu.find('menu-item.upload-file').click(function(e){
 				if(!$(e.target).hasClass('file-input')){
 					_this.openFileUpload();
 				}
 			});
-			
+
 			// bind for later access
 			this.menu = menu;
 
@@ -2196,7 +2196,7 @@
 					plot.show();
 					$(this).addClass('active');
 				}
-				
+
 			});
 		}
 
@@ -2214,7 +2214,7 @@
 		this.plot_z_index = 10000;
 
 		this.plot_draggable = function(elem){
-			
+
 			var $elem = $(elem);
 			var mouse_down = false;
 			var resize = false;
@@ -2229,17 +2229,17 @@
 			$elem.find('.close').click(function(){
 				// remove plot
 				delete _this.plots[plot_id];
-				
+
 				// remove element
 				$($elem).remove();
 
 				// remove from menu
 				_this.menu.find('menu-item[data-plot-id="'+plot_id+'"]').remove();
-				
+
 				if(_this.menu.find('.plot-list menu-item').length == 1){
 					_this.menu.find('.no-plots').show();
 				}
-			
+
 			})
 
 			$elem.find('.minimize').click(function(){
@@ -2247,13 +2247,13 @@
 				// animation
 				$elem.addClass('animate');
 
-				
+
 				var position = $elem.position()
 				var oldTransform = [position.left, position.top];
 
 				// move transform to upper left
 				$elem.css({ transform: "translate("+ (-oldTransform[0]) +"px,"+ (-oldTransform[1]) +"px)", opacity: 0});
-				
+
 				setTimeout(function(){
 
 					// remove active from menu
@@ -2263,28 +2263,28 @@
 
 					// restore pre-animation variables
 					$elem.css({opacity: 1, transform: ''});
-				
+
 				},300);
-				
+
 			})
-			
+
 			$elem.find('.save-svg').click(function(){
-				
+
 				Plotly.toImage(plot_id,{format:'svg', width:$elem.width(), height:$elem.height()}).then(function(data){
-					
+
 					dataURLtoBytes(data).then(function(data){
 						download(data, plot_id + ".svg", "svg");
 					})
 				});
-			
+
 			});
-			
+
 
 			elem.addEventListener('mousedown', function(e){
 				mouse_down = true;
 				curPosition = [e.clientX, e.clientY];
 
-				// increment z-index 
+				// increment z-index
 				_this.plot_z_index++;
 
 				$elem.css({zIndex: _this.plot_z_index});
@@ -2303,11 +2303,11 @@
 						if(!$(e.target).hasClass('dragcover')){
 							transform[0] += diff[0];
 							transform[1] += diff[1];
-	
+
 							// move
 							$elem.css({left: transform[0] + "px", top: transform[1] + "px"})
 						}
-						
+
 					}else{
 						// resize
 						var plotly_holder = $elem.find('.plotly-holder');
@@ -2327,11 +2327,11 @@
 						Plotly.relayout(plot_id, update);
 					}
 
-					
+
 
 					curPosition = [e.clientX, e.clientY];
 				}
-				
+
 			});
 			document.addEventListener('mouseup',function(){
 				mouse_down = false;
@@ -2353,18 +2353,26 @@
 			// }
 
 		}
-		
+
 		this.get_range_float = function(range, sheetIndex){
 			if(sheetIndex === undefined){
 				console.error("sheetIndex must be defined for get_range_float")
 			}
 			return this.get_range(range[0],range[1], sheetIndex).map(this.parseFloatForced);
 		}
-		
+
+
+		this.get_range_text = function(range, sheetIndex){
+			if(sheetIndex === undefined){
+				console.error("sheetIndex must be defined for get_range_float")
+			}
+			return this.get_range(range[0],range[1], sheetIndex);
+		}
+
 		this.update_plot = function(plot){
 			var x_range = plot.data[0];
 			var y_range = plot.data[1];
-			
+
 			var data_update;
 
 			data_update = {};
@@ -2386,11 +2394,11 @@
 			// 	'yaxis.autorange': true
 			// });
 
-			// recompute 
+			// recompute
 			if(plot.type == 'histogram'){
 				// TODO: re-compute the histogram bins
 			}
-			
+
 		}
 
 		this.plot = function(type){
@@ -2408,7 +2416,7 @@
 					alert("Scatter plot requires two columns");
 					return;
 				}
-				
+
 				x_range = [[selectedCellsOrdered[0][0],selectedCellsOrdered[0][1]],[selectedCellsOrdered[1][0],selectedCellsOrdered[1][1]-1]];
 				y_range = [[selectedCellsOrdered[0][0],selectedCellsOrdered[0][1]+1],[selectedCellsOrdered[1][0],selectedCellsOrdered[1][1]]];
 
@@ -2420,11 +2428,11 @@
 				};
 
 			}
-			
+
 			if(type == 'histogram'){
-				
+
 				x_range = [[selectedCellsOrdered[0][0],selectedCellsOrdered[0][1]],[selectedCellsOrdered[1][0],selectedCellsOrdered[1][1]]];
-				
+
 				var trace1 = {
 					x: this.get_range_float(x_range, this.activeSheet),
 					type: 'histogram'
@@ -2442,7 +2450,7 @@
 				if(selectedCellsOrdered[0][1] != selectedCellsOrdered[1][1]){
 					x_range = [[selectedCellsOrdered[0][0],selectedCellsOrdered[0][1]],[selectedCellsOrdered[1][0],selectedCellsOrdered[1][1]-1]];
 					y_range = [[selectedCellsOrdered[0][0],selectedCellsOrdered[0][1]+1],[selectedCellsOrdered[1][0],selectedCellsOrdered[1][1]]];
-					
+
 					var trace1 = {
 						x: this.get_range_float(x_range, this.activeSheet),
 						y: this.get_range_float(y_range, this.activeSheet),
@@ -2452,7 +2460,7 @@
 				}else{
 
 					y_range = [[selectedCellsOrdered[0][0],selectedCellsOrdered[0][1]],[selectedCellsOrdered[1][0],selectedCellsOrdered[1][1]]];
-					
+
 					var trace1 = {
 						y: this.get_range_float(y_range, this.activeSheet),
 						mode: 'lines',
@@ -2460,9 +2468,9 @@
 					};
 
 				}
-				
+
 			}
-			
+
 			// increment plot count after validation steps
 
 			this.plot_count++;
@@ -2481,7 +2489,7 @@
 			plot_div.css({left: offsetX + "px", top: offsetY + "px"})
 
 			$('.main-body').prepend(plot_div);
-			
+
 			var layout = {
 				title: type.capitalize() + " plot",
 				showlegend: false,
@@ -2496,12 +2504,91 @@
 			Plotly.setPlotConfig({
 				modeBarButtonsToRemove: ['sendDataToCloud']
 			});
-				
+
 			Plotly.newPlot(plot_id, [trace1], layout,{scrollZoom: true});
 
 			this.addPlotToMenu(plot_id);
 			this.plot_draggable(plot_div[0]);
-			
+
+			// add plot
+			var plotObject = {plot_id, type: type, data: [x_range, y_range], traces: [trace1], layout: layout, sheetIndex: this.activeSheet};
+			this.plots[plot_id] = plotObject
+
+			// refresh data only on initial plot
+			if(x_range.length > 0){
+				var rangeString = this.cellArrayToStringRange([x_range[0],x_range[1]]);
+				this.refreshDataRange(rangeString, plotObject.sheetIndex);
+			}
+
+			if(y_range.length > 0){
+				var rangeString = this.cellArrayToStringRange([y_range[0],y_range[1]]);
+				this.refreshDataRange(rangeString, plotObject.sheetIndex);
+			}
+
+		}
+
+		this.parallelText = function(){
+
+			var x_range = [];
+			var y_range = [];
+
+			var selectedCellsOrdered = this.getSelectedCellsInOrder();
+
+			// get current data range
+
+			x_range = [[selectedCellsOrdered[0][0],selectedCellsOrdered[0][1]],[selectedCellsOrdered[1][0],selectedCellsOrdered[1][1]]];
+
+			var x_data = this.get_range_text(x_range, this.activeSheet);
+			// increment plot count after validation steps
+
+			this.plot_count++;
+
+			var plot_id = "plot-" + this.plot_count;
+			var plot_div = $('<div class="plot parallel-text"><div class="resizer"></div><div class="plot-header"><div class="close"><img src="image/cross.svg" /></div><div class="minimize"><img src="image/dash.svg" /></div><div class="save-svg"><img src="image/floppy.svg" /></div></div><div class="plotly-holder" id="'+plot_id+'" ></div></div>');
+
+			// position in the middle
+			var plotWidth = 520;
+			var plotHeight = plotWidth / (16/9);
+
+			var offsetX = (this.sheetDom.clientWidth - plotWidth)/2;
+			var offsetY = this.sheetDom.clientHeight * 0.1;
+
+			plot_div.find("#"+plot_id).css({width: plotWidth, height: plotHeight});
+			plot_div.css({left: offsetX + "px", top: offsetY + "px"})
+
+			$('.main-body').prepend(plot_div);
+
+			for (ele of x_data) {
+				plot_div.append('$<div class="card" style="width: 18rem;">\n' +
+					'  <img class="card-img-top" src="..." alt="Card image cap">\n' +
+					'  <div class="card-body">\n' +
+					'    <h5 class="card-title">Card title</h5>\n' +
+					'    <p class="card-text">' + ele + '</p>\n' +
+					'    <a href="#" class="btn btn-primary">Go somewhere</a>\n' +
+					'  </div>\n' +
+					'</div>');
+			}
+
+			// var layout = {
+			// 	title: type.capitalize() + " plot",
+			// 	showlegend: false,
+			// 	margin: {
+			// 		l: 40,
+			// 		r: 40,
+			// 		b: 40,
+			// 		t: 100,
+			// 		pad: 4},
+			// };
+			//
+			// Plotly.setPlotConfig({
+			// 	modeBarButtonsToRemove: ['sendDataToCloud']
+			// });
+			//
+			// Plotly.newPlot(plot_id, [trace1], layout,{scrollZoom: true});
+			//
+			// this.addPlotToMenu(plot_id);
+			this.plot_draggable(plot_div[0]);
+
 			// add plot
 			var plotObject = {plot_id, type: type, data: [x_range, y_range], traces: [trace1], layout: layout, sheetIndex: this.activeSheet};
 			this.plots[plot_id] = plotObject
@@ -2529,7 +2616,7 @@
 			return this.numColumns * this.cellWidth;
 		}
 		this.computedColumnWidth = this.computeColumnWidth();
-		
+
 		this.computeRowHeight = function(){
 			return this.numRows * this.cellHeight;
 		}
@@ -2543,7 +2630,7 @@
 			this.ctx.lineWidth = 1;
 
 			// this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-			
+
 
 			// incorporate offset in drawing
 
@@ -2588,7 +2675,7 @@
 			if(this.sidebarSize[0] < this.minSidebarSize[0]){
 				this.sidebarSize[0] = this.minSidebarSize[0];
 			}
-			
+
 
 			var drawColumnStart = Math.round(columnPercentage * this.finalColumn);
 
@@ -2597,7 +2684,7 @@
 					break;
 				}
 				measureWidth += this.columnWidths(x);
-				
+
 			}
 
 			for(var x = 0; x < this.numRows; x++){
@@ -2605,9 +2692,9 @@
 					break;
 				}
 				measureHeight += this.rowHeights(x);
-				
+
 			}
-			
+
 
 			// empty cell catch
 			if(drawRowStart === undefined){
@@ -2642,7 +2729,7 @@
 			this.ctx.fillRect(0, 0, horizontalLineEndX, this.sidebarSize[1]);
 			this.ctx.fillRect(0, 0, this.sidebarSize[0], verticalLineEndY);
 			this.ctx.fillStyle = "#000000";
-			
+
 
 			// render horizontal lines
 			// render grid
@@ -2673,7 +2760,7 @@
 			var currentX = 0;
 
 			while(true){
-				
+
 				if(currentX > width + this.columnWidths(d) || d > this.numColumns){
 					break;
 				}
@@ -2710,8 +2797,8 @@
 			if(this.drawColumnEnd != d){
 				viewInvalidated = true;
 			}
-			
-			
+
+
 			this.drawRowStart = drawRowStart;
 			this.drawColumnStart = drawColumnStart;
 			this.drawRowEnd = i;
@@ -2727,12 +2814,12 @@
 			// render cell data
 			this.renderCells(drawRowStart, drawColumnStart, i-1, d-1, firstCellHeightOffset, firstCellWidthOffset);
 
-			
+
 			// also re-render the input_formula field
 			this.updateInputFormula();
-			
+
 		}
-		
+
 		this.updateInputFormula = function(){
 			this.formula_input.val(this.get_formula(this.selectedCells[0], this.activeSheet));
 		}
@@ -2754,9 +2841,9 @@
 
 
 		this.renderHighlights = function(){
-			
+
 			if(this.selectedCells){
-				
+
 				// selectedCellStart is filled
 				this.ctx.fillStyle = "rgba(50, 110, 255, 0.20)";
 
@@ -2782,7 +2869,7 @@
 							this.ctx.strokeRect(
 								strokeX,
 								strokeY,
-								this.columnWidths(this.selectedCells[0][1]), 
+								this.columnWidths(this.selectedCells[0][1]),
 								this.rowHeights(this.selectedCells[0][0])
 							);
 						}
@@ -2803,7 +2890,7 @@
 					if(xCellDistance < 0){
 						for(var x = 0; x >= xCellDistance;x--){
 							highlightWidth -= this.columnWidths(cellsForSelected[0][1] + x);
-							
+
 							if(x == 0){
 								shiftX = Math.abs(highlightWidth);
 							}
@@ -2827,8 +2914,8 @@
 							highlightHeight += this.rowHeights(cellsForSelected[0][0] + y);
 						}
 					}
-					
-					
+
+
 					var drawX = cell_position[0] + shiftX + this.sidebarSize[0];
 					var drawY = cell_position[1] + shiftY + this.sidebarSize[1];
 					var drawWidth = highlightWidth;
@@ -2849,17 +2936,17 @@
 						}
 						drawY = this.sidebarSize[1];
 					}
-					
+
 					this.ctx.fillRect(
 						drawX,
-						drawY, 
-						drawWidth, 
+						drawY,
+						drawWidth,
 						drawHeight);
 
 
 					// draw two rectangles in left sidebar and top column bar
 					this.ctx.fillStyle = "rgba(0,0,0,0.1)";
-					
+
 					this.ctx.fillRect(
 						0,
 						drawY,
@@ -2878,7 +2965,7 @@
 			}
 
 		}
-		
+
 
 		this.renderCells = function(startRow, startColumn, endRow, endColumn, firstCellHeightOffset, firstCellWidthOffset){
 
@@ -2891,7 +2978,7 @@
 			var currentY = 0;
 			var startX = 0;
 
-			// render one more 
+			// render one more
 			for(var i = startRow; i < endRow; i++){
 
 				for(var d = startColumn; d < endColumn; d++){
@@ -2919,13 +3006,13 @@
 
 						var centerOffset = this.columnWidths(d)/2;
 						var centeringOffset = ((this.sidebarSize[1] + 2 - this.fontHeight)/2) + 1;
-					
+
 						this.ctx.fillText(this.indexToLetters(d+1), currentX + firstCellWidthOffset + this.sidebarSize[0] + centerOffset, centeringOffset);
 					}
 
 					currentX += this.columnWidths(d);
-					
-					
+
+
 				}
 
 				this.ctx.textAlign = 'center';
