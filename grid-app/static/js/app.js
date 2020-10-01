@@ -2559,16 +2559,16 @@
 			$('.main-body').prepend(plot_div);
 
 			for (ele of x_data) {
-				plot_div.append('$<div class="card" style="width: 18rem;">\n' +
-					'  <img class="card-img-top" src="..." alt="Card image cap">\n' +
-					'  <div class="card-body">\n' +
-					'    <h5 class="card-title">Card title</h5>\n' +
-					'    <p class="card-text">' + ele + '</p>\n' +
-					'    <a href="#" class="btn btn-primary">Go somewhere</a>\n' +
-					'  </div>\n' +
-					'</div>');
+				plot_div.append(
+					'  <div class="col-sm-2">\n' +
+					'    <div class="card">\n' +
+					'      <div class="card-body">\n' +
+					// '        <h5 class="card-title">Special title treatment</h5>\n' +
+					'        <p class="card-text">' + ele +
+					'</p>\n' +
+					'      </div>\n' +
+					'    </div>\n');
 			}
-
 			// var layout = {
 			// 	title: type.capitalize() + " plot",
 			// 	showlegend: false,
@@ -2590,8 +2590,8 @@
 			this.plot_draggable(plot_div[0]);
 
 			// add plot
-			var plotObject = {plot_id, type: type, data: [x_range, y_range], traces: [trace1], layout: layout, sheetIndex: this.activeSheet};
-			this.plots[plot_id] = plotObject
+			var plotObject = {plot_id, type: "parallel-text", data: [x_range, y_range], traces: [trace1], layout: layout, sheetIndex: this.activeSheet};
+			this.plots[plot_id] = plotObject;
 
 			// refresh data only on initial plot
 			if(x_range.length > 0){
