@@ -2377,8 +2377,8 @@
 
 			data_update = {};
 
-			data_update.type = plot.traces[0].type;
-			data_update.mode = plot.traces[0].mode;
+			// data_update.type = plot.traces[0].type;
+			// data_update.mode = plot.traces[0].mode;
 
 			if(y_range.length > 0){
 				data_update.y = this.get_range_float(y_range, plot.sheetIndex)
@@ -2544,17 +2544,7 @@
 			this.plot_count++;
 
 			var plot_id = "plot-" + this.plot_count;
-			var plot_div = $('<div class="plot parallel-text"><div class="resizer"></div><div class="plot-header"><div class="close"><img src="image/cross.svg" /></div><div class="minimize"><img src="image/dash.svg" /></div><div class="save-svg"><img src="image/floppy.svg" /></div></div><div class="plotly-holder" id="'+plot_id+'" ></div></div>');
-
-			// position in the middle
-			var plotWidth = 520;
-			var plotHeight = plotWidth / (16/9);
-
-			var offsetX = (this.sheetDom.clientWidth - plotWidth)/2;
-			var offsetY = this.sheetDom.clientHeight * 0.1;
-
-			plot_div.find("#"+plot_id).css({width: plotWidth, height: plotHeight});
-			plot_div.css({left: offsetX + "px", top: offsetY + "px"})
+			var plot_div = $('<div class="plot parallel-text code-editor"><div class="resizer"></div><div class="plot-header"><div class="close"><img src="image/cross.svg" /></div><div class="minimize"><img src="image/dash.svg" /></div><div class="save-svg"><img src="image/floppy.svg" /></div></div><div class="plotly-holder" id="'+plot_id+'" ></div></div>');
 
 			$('.main-body').prepend(plot_div);
 
@@ -2590,7 +2580,7 @@
 			this.plot_draggable(plot_div[0]);
 
 			// add plot
-			var plotObject = {plot_id, type: "parallel-text", data: [x_range, y_range], traces: [trace1], layout: layout, sheetIndex: this.activeSheet};
+			var plotObject = {plot_id, type: "parallel-text", data: [x_range, y_range], sheetIndex: this.activeSheet};
 			this.plots[plot_id] = plotObject;
 
 			// refresh data only on initial plot

@@ -152,7 +152,7 @@ body div-sheet canvas {
   flex-direction: column;
   position: absolute;
   height: 100%;
-  width: 61.8%;
+  width: 40%;
 }
 .left-panel .progress-indicator {
   position: absolute;
@@ -330,7 +330,7 @@ body div-sheet canvas {
   object-fit: contain;
 }
 .code-editor {
-  width: 38.2%;
+  width: 60%;
   right: 0;
   height: 100%;
   position: absolute;
