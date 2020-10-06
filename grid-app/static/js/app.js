@@ -2544,17 +2544,41 @@
 			this.plot_count++;
 
 			var plot_id = "plot-" + this.plot_count;
-			var plot_div = $('<div class="plot parallel-text code-editor"><div class="resizer"></div><div class="plot-header"><div class="close"><img src="image/cross.svg" /></div><div class="minimize"><img src="image/dash.svg" /></div><div class="save-svg"><img src="image/floppy.svg" /></div></div><div class="plotly-holder" id="'+plot_id+'" ></div></div>');
-
+			var plot_div = $('<div class="plot parallel-text code-editor"><div class="resizer"></div><div class="plot-header"><div class="close"><img src="image/cross.svg" /></div><div class="minimize"><img src="image/dash.svg" /></div><div class="save-svg"><img src="image/floppy.svg" /></div></div></div></div>');
+            plot_div.append('<br><br><br>');
 			$('.main-body').prepend(plot_div);
 
-			for (ele of x_data) {
+			for (i = 0; i < x_data.length; i++) {
+				var ele = x_data[i];
+				var fragment = document.createElement('div');
+				var span = null;
+				var color = '';
+
+				if (i === 0) {
+					span = document.createElement('span');
+					span.appendChild(document.createTextNode(ele));
+					fragment.appendChild(span);
+				}
+				else {
+					var prev_ele = x_data[i-1];
+					var diff = Diff.diffChars(prev_ele, ele);
+					diff.forEach((part) => {
+						var color = part.added ? 'green' :
+							part.removed ? 'red' : 'black';
+						span = document.createElement('span');
+						span.style.color = color;
+						console.log("part.value: ", part.value);
+						span.appendChild(document.createTextNode(part.value));
+						fragment.appendChild(span);
+					});
+					console.log("fragment: ", fragment);
+				}
 				plot_div.append(
 					'  <div class="col-sm-2">\n' +
 					'    <div class="card">\n' +
 					'      <div class="card-body">\n' +
 					// '        <h5 class="card-title">Special title treatment</h5>\n' +
-					'        <p class="card-text">' + ele +
+					'        <p class="card-text">' + fragment.innerHTML +
 					'</p>\n' +
 					'      </div>\n' +
 					'    </div>\n');
