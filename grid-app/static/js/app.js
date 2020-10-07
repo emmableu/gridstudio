@@ -2550,6 +2550,8 @@
 
 			var prev_ele;
 			for (i = 0; i < x_data.length; i++) {
+				if (x_data[i] === '') continue;
+				console.log("x_data[i]: ", x_data[i]);
 				var ele = x_data[i];
 				ele = JSON.stringify(ele, null, "\u00a0\u00a0");
 				ele = ele.replace(/\Wn/gm, "<br />");
