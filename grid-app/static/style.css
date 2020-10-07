@@ -522,3 +522,6 @@ input.input-field {
   background: #fff;
   z-index: 9;
 }
+.card {
+  word-wrap: break-word;
+}

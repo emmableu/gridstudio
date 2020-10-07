@@ -2582,7 +2582,7 @@
 				console.log("fragment: ", fragment);
 				var fragmentDisplay = fragment.innerHTML;
 				plot_div.append(
-					'  <div class="col-sm-2">\n' +
+					'  <div class="col-sm-1" style = "width: 10" >\n' +
 					'    <div class="card">\n' +
 					'      <div class="card-body">\n' +
 					// '        <h5 class="card-title">Special title treatment</h5>\n' +
